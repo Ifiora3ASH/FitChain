@@ -35,8 +35,8 @@ contract FitChainSubscription is ERC1155 {
     mapping(address => Subscription) public subscriptions;
 
     event TierDefined (uint256 tierID, uint256 credits, uint256 price);
-    event Subscriped (address indexed member, uint256 tierID, uint256 expiry);
-    event Renwed (address indexed member, uint256 tierID, uint256 newExpiry);
+    event Subscribed (address indexed member, uint256 tierID, uint256 expiry);
+    event Renewed (address indexed member, uint256 tierID, uint256 newExpiry);
     event CreditsSpent (address indexed member, uint256 amount);
 
     modifier onlyAdmin() {
@@ -62,7 +62,7 @@ contract FitChainSubscription is ERC1155 {
 
     //US-A3: Admin can update tier settings
     function setTier(uint256 _tierID, uint256 _credits, uint256 _price) external onlyAdmin {
-        require (tierID >= 1 && _tierID <= 3, "Invalid tier");
+        require (_tierID >= 1 && _tierID <= 3, "Invalid tier");
         tiers[_tierID] = Tier({ credits: _credits, price: _price, exists: true});
         emit TierDefined(_tierID, _credits, _price);
     }
@@ -80,14 +80,73 @@ contract FitChainSubscription is ERC1155 {
         Tier memory tier = tiers[_tierID];
         require(msg.value == tier.price, "Incorrect ETH amount");
 
-        uint256 expiry == block.timestamp + 30 days;
+        uint256 expiry = block.timestamp + 30 days;
 
-        subscriptions[msg.sender] = Subscription({tierID: _tierID, expiry: _expiry, active: true});
+        subscriptions[msg.sender] = Subscription({tierID: _tierID, expiry: expiry, active: true});
 
         //Mint ERC1155 credits to the memeber
         _mint(msg.sender, _tierID, tier.credits, "");
 
-        emit Subscriped(msg.sender, _tierID, expiry);
+        emit Subscribed(msg.sender, _tierID, expiry);
     }
 
+    //US-M2: renew subscription
+    function renewSubscription() external payable {
+        Subscription storage sub = subscriptions[msg.sender];
+        require(sub.active || sub.expiry > 0 , "Not subscribed");
+
+        Tier memory tier = tiers[sub.tierID];
+        require(msg.value == tier.price, "Incorrect ETH amount");
+
+        // Extend expiry by 30 days
+        uint256 newExpiry;
+        if (block.timestamp < sub.expiry) {
+            newExpiry = sub.expiry + 30 days; // If expired, start from now
+        } else {
+            newExpiry = block.timestamp + 30 days; // If still active, extend
+        }
+
+        sub.expiry = newExpiry;
+        sub.active = true;
+
+        // Mint new credits for the renewed month
+        _mint(msg.sender, sub.tierID, tier.credits, "");
+
+        emit Renewed(msg.sender, sub.tierID, newExpiry);
+    }
+
+    // Called by FitChainLedger to burn credits when checking in
+    function burnCredits(address _member, uint256 _tierId, uint256 _amount) external onlyLedger {
+        require(balanceOf(_member, _tierId) >= _amount, "Not enough credits");
+        _burn(_member, _tierId, _amount);
+        emit CreditsSpent(_member, _amount);
+    }
+
+    // US-M3: Check if subscription is active
+    function isActive(address _member) external view returns (bool) {
+        Subscription memory sub = subscriptions[_member];
+        return sub.active && block.timestamp < sub.expiry;
+    }
+
+    // US-M6: Shows credit balance AND subscription expiry together
+    function getMemberStatus(address _member) external view returns (uint256 credits, uint256 expiry, bool active) {
+        Subscription memory sub = subscriptions[_member];
+        credits = sub.tierID == 0 ? 0 : balanceOf(_member, sub.tierID);
+        expiry = sub.expiry;
+        active = sub.active && block.timestamp < sub.expiry;
+    }
+
+    //get visit cap for a tier
+    function getVisitCap(uint256 _tierID) external pure returns (uint256) {
+        if (_tierID == BRONZE) return BRONZE_CAP;
+        if (_tierID == SILVER) return SILVER_CAP;
+        if (_tierID == GOLD) return GOLD_CAP;
+        return 0;
+    }
+
+    //Admin withdraws collected ETH
+    function withdraw() external onlyAdmin {
+        payable(admin).transfer(address(this).balance);
+    }
+    
 }

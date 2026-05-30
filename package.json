@@ -4,5 +4,28 @@
   "private": true,
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.6.1"
+  },
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {
+    "mocha": "^11.7.5"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BlackFDog/fitchain.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/BlackFDog/fitchain/issues"
+  },
+  "homepage": "https://github.com/BlackFDog/fitchain#readme"
 }
