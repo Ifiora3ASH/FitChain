@@ -60,6 +60,11 @@ contract FitChainSubscription is ERC1155 {
         tiers[GOLD] = Tier({ credits: 150, price:0.03 ether, exists: true});
     }
 
+    //Allow ledger to call this function to add credits for loyalty bonuses (Easa's Cherry on top)
+    function mintBonus(address _member, uint256 _tierId, uint256 _amount) external onlyLedger {
+        _mint(_member, _tierId, _amount, "");
+    }
+
     //US-A3: Admin can update tier settings
     function setTier(uint256 _tierID, uint256 _credits, uint256 _price) external onlyAdmin {
         require (_tierID >= 1 && _tierID <= 3, "Invalid tier");
@@ -101,9 +106,9 @@ contract FitChainSubscription is ERC1155 {
         // Extend expiry by 30 days
         uint256 newExpiry;
         if (block.timestamp < sub.expiry) {
-            newExpiry = sub.expiry + 30 days; // If expired, start from now
+            newExpiry = sub.expiry + 30 days; // Still active - extend from current expiry
         } else {
-            newExpiry = block.timestamp + 30 days; // If still active, extend
+            newExpiry = block.timestamp + 30 days; // Expired - start fresh from now
         }
 
         sub.expiry = newExpiry;
@@ -128,12 +133,21 @@ contract FitChainSubscription is ERC1155 {
         return sub.active && block.timestamp < sub.expiry;
     }
 
-    // US-M6: Shows credit balance AND subscription expiry together
-    function getMemberStatus(address _member) external view returns (uint256 credits, uint256 expiry, bool active) {
+    // US-M6: Get credit balance
+    function getBalance(address _member) external view returns (uint256) {
         Subscription memory sub = subscriptions[_member];
-        credits = sub.tierID == 0 ? 0 : balanceOf(_member, sub.tierID);
-        expiry = sub.expiry;
-        active = sub.active && block.timestamp < sub.expiry;
+        if (sub.tierID == 0) return 0;
+        return balanceOf(_member, sub.tierID);
+    }
+
+    // US-M6: Get subscription expiry
+    function getExpiry(address _member) external view returns (uint256) {
+        return subscriptions[_member].expiry;
+    }
+
+    // US-M6: Get tier of a member
+    function getMemberTier(address _member) external view returns (uint256) {
+        return subscriptions[_member].tierID;
     }
 
     //get visit cap for a tier
