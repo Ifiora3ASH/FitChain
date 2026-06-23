@@ -149,7 +149,7 @@ contract FitChainSubscription is ERC1155 {
     // Called by ledger to mint a VIP badge for a specific facility (Easa's cherry on top)
     // Uses the facility address as the token ID so each facility has a unique badge
     function mintVIPBadge(address _member, address _facility) external onlyLedger {
-        uint256 badgeId = uint256(uint160(_facility));
+        uint256 badgeId = uint256(_facility);
         // Only mint if member doesn't already have the badge
         if (balanceOf(_member, badgeId) == 0) {
             _mint(_member, badgeId, 1, "");

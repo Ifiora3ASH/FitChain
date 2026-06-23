@@ -119,6 +119,9 @@ contract FitChainLedger {
         // Transfer credits from member wallet to facility wallet
         subscription.transferCredits(msg.sender, _facility, actualCost);
 
+        // Update check-in streak
+        subscription.updateCheckInStreak(msg.sender);
+
         // Record earnings in facility account
         facilityAccounts[_facility].earnings += actualCost;
 
