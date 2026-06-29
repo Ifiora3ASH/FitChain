@@ -1,0 +1,113 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitChain – City-wide Sports Network</title>
+  <script type="module" src="/src/main.ts"></script>
+</head>
+<body>
+
+  <div class="topbar">
+    <h1>⚡ FitChain</h1>
+    <nav>
+      <a href="member.html">Member</a>
+      <a href="facility.html">Facility</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+  </div>
+
+
+  <div class="hero-wrapper">
+    <span class="hero-eyebrow">Solidity · Hardhat · Ethereum</span>
+    <h1 class="hero-title">Check in anywhere.<br><span>Pay with credits.</span></h1>
+    <p class="hero-sub">
+      FitChain is a blockchain-based fitness subscription system built on Ethereum.
+      Subscribe with ETH, check in at registered facilities and earn credits —
+      no central server, just smart contracts.
+    </p>
+
+    <div class="portal-grid">
+      <a href="admin.html" class="portal-card" id="card-admin">
+        <div class="icon">🛡️</div>
+        <h3>Admin Portal</h3>
+        <p>Register facilities, configure subscription tiers and set the exchange rate.</p>
+      </a>
+      <a href="member.html" class="portal-card">
+        <div class="icon">👤</div>
+        <h3>Member Portal</h3>
+        <p>Subscribe with ETH, check in at facilities and track your visits.</p>
+      </a>
+      <a href="facility.html" class="portal-card" id="card-facility">
+        <div class="icon">🏢</div>
+        <h3>Facility Portal</h3>
+        <p>Set your session price, view accumulated earnings and withdraw to your wallet.</p>
+      </a>
+    </div>
+  </div>
+
+
+  <div class="about-section">
+
+    <div class="about-header">
+      <h2>About the <span>Project</span></h2>
+      <p>What we built and how it works.</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feat-icon">⛓️</div>
+        <h3>On-Chain Check-ins</h3>
+        <p>Every check-in is a transaction on Ethereum. Your visit history is stored permanently and can be verified by anyone.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">🏙️</div>
+        <h3>Multi-Facility Access</h3>
+        <p>One subscription works at every registered facility in the network — gyms, pools, climbing walls and more.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">💎</div>
+        <h3>Referral Bonus</h3>
+        <p>Refer a friend when they subscribe and both of you receive bonus credits on-chain — set by the admin and paid out automatically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">⚡</div>
+        <h3>Peak Hour Pricing</h3>
+        <p>Facilities can set a price multiplier for busy hours, stored on-chain. You see the exact cost before confirming a check-in.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">🔓</div>
+        <h3>No Middleman</h3>
+        <p>When you check in, credits go directly to the facility's account. The smart contract handles the payment — no platform takes a cut.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feat-icon">🏅</div>
+        <h3>VIP Badge</h3>
+        <p>Visit the same facility 4 weeks in a row and earn a VIP badge — an on-chain ERC-1155 token that unlocks a check-in discount at that venue.</p>
+      </div>
+    </div>
+
+    <div class="stats-strip">
+      <div class="stats-strip-item">
+        <div class="num">3</div>
+        <div class="desc">Subscription tiers</div>
+      </div>
+      <div class="stats-strip-item">
+        <div class="num">6+</div>
+        <div class="desc">Sport categories</div>
+      </div>
+      <div class="stats-strip-item">
+        <div class="num">100%</div>
+        <div class="desc">On-chain</div>
+      </div>
+      <div class="stats-strip-item">
+        <div class="num">0</div>
+        <div class="desc">Middlemen</div>
+      </div>
+    </div>
+
+    <p class="footer-line">&copy; <span id="year"></span> FitChain Foundation — built on Ethereum</p>
+  </div>
+
+</body>
+</html>

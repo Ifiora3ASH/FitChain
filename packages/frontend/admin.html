@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitChain – Admin</title>
+  <script type="module" src="/src/admin.ts"></script>
+  <style>
+    /* Page header */
+    .page-header {
+      background: linear-gradient(135deg, #0d1030 0%, #1a1445 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 55%, rgba(255,255,255,0.06) 55%);
+      pointer-events: none;
+    }
+    .page-header .page-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .page-header h2 {
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+    .page-header h2 span { color: var(--green); }
+    .page-header p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.875rem;
+      margin-top: 0.4rem;
+    }
+
+    /* Section icon */
+    section h2 .s-icon { margin-right: 0.4rem; font-style: normal; }
+
+    /* Info note box (reused pattern) */
+    .info-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      background: rgba(108,99,255,0.08);
+      border: 1px solid rgba(108,99,255,0.25);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .info-note span:first-child { font-size: 1.1rem; flex-shrink: 0; }
+
+    /* Danger note */
+    .danger-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      background: rgba(220,38,38,0.06);
+      border: 1px solid rgba(220,38,38,0.25);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      color: #fca5a5;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .danger-note span:first-child { font-size: 1.1rem; flex-shrink: 0; }
+
+    /* Tier summary cards */
+    .tier-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 0.25rem;
+    }
+    .tier-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--green);
+      border-radius: 6px;
+      padding: 0.9rem 1rem;
+      text-align: center;
+    }
+    .tier-card .tier-name {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    .tier-card .tier-val {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    /* Rate display */
+    .rate-display {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .rate-display strong { color: var(--green); }
+
+    /* Referral bonus display */
+    .bonus-display {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(108,99,255,0.15);
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.3rem 0.75rem;
+      border-radius: 99px;
+      margin-bottom: 1rem;
+    }
+
+    /* Active facilities table */
+    #facTable td { vertical-align: middle; }
+    #facTable small { color: var(--muted); }
+
+    .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <h1>⚡ FitChain</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="member.html">Member</a>
+      <a href="facility.html">Facility</a>
+    </nav>
+  </div>
+
+  <div id="wallet-banner"></div>
+
+  <div class="page-header">
+    <div class="page-icon">🛡️</div>
+    <h2>Admin <span>Portal</span></h2>
+    <p>Manage facilities, configure subscription tiers and platform settings.</p>
+  </div>
+
+  <main>
+
+    <section>
+      <h2><i class="s-icon">➕</i>Register Facility</h2>
+      <div class="info-note">
+        <span>ℹ️</span>
+        <span>Registering a facility whitelists it on the network. The facility then sets its own session price from the Facility Portal.</span>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Wallet address *</label>
+          <input id="facAddr" type="text" placeholder="0x…" />
+        </div>
+        <div class="field">
+          <label>Venue name *</label>
+          <input id="facName" type="text" placeholder="Boulder World" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Vendor / brand *</label>
+          <input id="facVendor" type="text" placeholder="BoulderCo" />
+        </div>
+        <div class="field">
+          <label>Category *</label>
+          <select id="facCategory">
+            <option value="Climbing">Climbing</option>
+            <option value="Yoga">Yoga</option>
+            <option value="Swimming">Swimming</option>
+            <option value="Martial Arts">Martial Arts</option>
+            <option value="Tennis">Tennis</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <button id="btnRegisterFacility">Register Facility</button>
+      <div id="statusRegister" class="status"></div>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">🗑️</i>Remove Facility</h2>
+      <div class="danger-note">
+        <span>⚠️</span>
+        <span>Removing a facility de-whitelists it immediately. Members will no longer be able to check in there.</span>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Select facility to remove</label>
+          <select id="removeFacAddr">
+            <option value="">Select a facility…</option>
+          </select>
+        </div>
+      </div>
+      <button id="btnRemoveFacility" class="danger">Remove from Whitelist</button>
+      <div id="statusRemove" class="status"></div>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">🏟️</i>Active Facilities</h2>
+      <table id="facTable">
+        <thead>
+          <tr>
+            <th>Address</th>
+            <th>Name</th>
+            <th>Vendor</th>
+            <th>Category</th>
+            <th>Session Price</th>
+            <th>Peak Hours</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody><tr><td colspan="7">Connect wallet to load…</td></tr></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">💳</i>Subscription Tiers</h2>
+
+      <div class="tier-summary">
+        <div class="tier-card">
+          <div class="tier-name">🥉 Bronze</div>
+          <div class="tier-val" id="tierInfo1">loading…</div>
+        </div>
+        <div class="tier-card">
+          <div class="tier-name">🥈 Silver</div>
+          <div class="tier-val" id="tierInfo2">loading…</div>
+        </div>
+        <div class="tier-card">
+          <div class="tier-name">🥇 Gold</div>
+          <div class="tier-val" id="tierInfo3">loading…</div>
+        </div>
+      </div>
+
+      <div style="margin-top:1rem">
+        <div class="row">
+          <div class="field">
+            <label>Tier to update</label>
+            <select id="tierNum">
+              <option value="1">🥉 Bronze</option>
+              <option value="2">🥈 Silver</option>
+              <option value="3">🥇 Gold</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Credits / month</label>
+            <input id="tierCredits" type="number" min="1" placeholder="50" />
+          </div>
+          <div class="field">
+            <label>Price (ETH)</label>
+            <input id="tierPrice" type="text" placeholder="0.01" />
+          </div>
+        </div>
+        <button id="btnConfigTier">Update Tier</button>
+        <div id="statusTier" class="status"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">💱</i>Credit-to-ETH Exchange Rate</h2>
+      <div class="rate-display">
+        Current rate: <strong id="currentRate">loading…</strong>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>New rate (ETH per credit)</label>
+          <input id="creditRate" type="text" placeholder="0.0002" />
+        </div>
+      </div>
+      <button id="btnSetRate">Set Rate</button>
+      <div id="statusRate" class="status"></div>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">🍒</i>Referral Bonus</h2>
+      <div class="bonus-display">
+        🎁 Current bonus: <strong id="currentReferralBonus">loading…</strong> credits per referral
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Bonus credits per referral (0 = disabled)</label>
+          <input id="referralBonusInput" type="number" min="0" placeholder="10" />
+        </div>
+      </div>
+      <button id="btnSetReferralBonus">Set Referral Bonus</button>
+      <div id="statusReferralBonus" class="status"></div>
+    </section>
+
+  </main>
+</body>
+</html>

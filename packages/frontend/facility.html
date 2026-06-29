@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitChain – Facility</title>
+  <script type="module" src="/src/facility.ts"></script>
+  <style>
+    /* Page header */
+    .page-header {
+      background: linear-gradient(135deg, #0d1030 0%, #1a1445 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 55%, rgba(255,255,255,0.06) 55%);
+      pointer-events: none;
+    }
+    .page-header .page-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .page-header h2 {
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+    .page-header h2 span { color: var(--green); }
+    .page-header p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.875rem;
+      margin-top: 0.4rem;
+    }
+
+    /* Section icon */
+    section h2 .s-icon { margin-right: 0.4rem; font-style: normal; }
+
+    /* Earnings highlight */
+    #infoEarnings { color: var(--green) !important; }
+
+    /* Peak cards neutral when not active */
+    #infoPeakWindow, #infoPeakPrice { font-size: 0.95rem; }
+
+    /* Info note */
+    .info-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      background: rgba(108,99,255,0.08);
+      border: 1px solid rgba(108,99,255,0.25);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .info-note span:first-child { font-size: 1.1rem; flex-shrink: 0; }
+
+    /* Withdraw CTA */
+    #btnWithdraw {
+      padding: 0.65rem 2rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* Withdraw info note */
+    .withdraw-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      background: rgba(108,99,255,0.08);
+      border: 1px solid rgba(108,99,255,0.25);
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+    .withdraw-note span { font-size: 1.1rem; }
+
+    .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <h1>⚡ FitChain</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="admin.html">Admin</a>
+      <a href="member.html">Member</a>
+    </nav>
+  </div>
+
+  <div id="wallet-banner"></div>
+
+  <div class="page-header">
+    <div class="page-icon">🏟️</div>
+    <h2>Facility <span>Portal</span></h2>
+    <p>Monitor your venue, manage pricing and withdraw your earnings.</p>
+  </div>
+
+  <main>
+
+    <section>
+      <h2><i class="s-icon">📊</i>Facility Overview</h2>
+      <p id="facStatus" style="color:#f59e0b;font-size:0.875rem;margin-bottom:0.75rem"></p>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="val" id="infoName" style="font-size:1.1rem">—</div>
+          <div class="lbl">Venue name</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="infoVendor" style="font-size:1.1rem">—</div>
+          <div class="lbl">Vendor</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="infoCategory">—</div>
+          <div class="lbl">Category</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="infoPrice">—</div>
+          <div class="lbl">Session price</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="infoEarnings">—</div>
+          <div class="lbl">Accumulated earnings</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="infoPeakWindow">—</div>
+          <div class="lbl">Peak hours (UTC)</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="infoPeakPrice">—</div>
+          <div class="lbl">Peak session price</div>
+        </div>
+      </div>
+      <div style="margin-top:1rem">
+        <button id="btnRefresh" class="secondary">↻ Refresh</button>
+      </div>
+      <div id="statusInfo" class="status"></div>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">💰</i>Set Session Price</h2>
+      <div class="row">
+        <div class="field">
+          <label>New price (credits per session)</label>
+          <input id="newPrice" type="number" min="1" placeholder="5" />
+        </div>
+      </div>
+      <button id="btnSetPrice">Update Session Price</button>
+      <div id="statusPrice" class="status"></div>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">⏰</i>Set Peak Hours</h2>
+      <div class="info-note">
+        <span>ℹ️</span>
+        <span>Set a price multiplier for your busy hours (e.g. 150 = 1.5×). Members will see the surcharge before confirming a check-in.</span>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Start hour (0–23 UTC)</label>
+          <input id="peakStart" type="number" min="0" max="23" placeholder="17" />
+        </div>
+        <div class="field">
+          <label>End hour (0–23 UTC)</label>
+          <input id="peakEnd" type="number" min="0" max="23" placeholder="21" />
+        </div>
+        <div class="field">
+          <label>Multiplier (e.g. 150 = 1.5×)</label>
+          <input id="peakMultiplier" type="number" min="100" max="500" placeholder="150" />
+        </div>
+      </div>
+      <button id="btnSetPeakHours">Set Peak Hours</button>
+      <div id="statusPeakHours" class="status"></div>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">💸</i>Withdraw Earnings</h2>
+      <div class="withdraw-note">
+        <span>ℹ️</span>
+        <span>Accumulated credits are converted to ETH at the platform exchange rate and sent directly to your wallet. This action burns the credits from your facility account.</span>
+      </div>
+      <button id="btnWithdraw">Withdraw to Wallet</button>
+      <div id="statusWithdraw" class="status"></div>
+    </section>
+
+  </main>
+</body>
+</html>

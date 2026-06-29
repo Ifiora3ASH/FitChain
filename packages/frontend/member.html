@@ -1,0 +1,303 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FitChain – Member</title>
+  <script type="module" src="/src/member.ts"></script>
+  <style>
+    /* Page header */
+    .page-header {
+      background: linear-gradient(135deg, #0d1030 0%, #1a1445 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 55%, rgba(255,255,255,0.06) 55%);
+      pointer-events: none;
+    }
+    .page-header .page-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .page-header h2 {
+      font-size: 1.9rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #fff;
+    }
+    .page-header h2 span { color: var(--green); }
+    .page-header p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.875rem;
+      margin-top: 0.4rem;
+    }
+
+    /* Section icons in headings */
+    section h2 .s-icon { margin-right: 0.4rem; font-style: normal; }
+
+    /* Tier table tweaks */
+    .tier-table td:first-child { font-weight: 600; }
+    .tier-table td:last-child  { color: var(--green); font-weight: 700; }
+
+    /* Referral highlight */
+    .referral-bonus-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(108,99,255,0.15);
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.3rem 0.75rem;
+      border-radius: 99px;
+      margin-bottom: 1rem;
+    }
+
+    /* Peak banner override (cleaner inside new design) */
+    #peakBanner {
+      border-radius: 6px;
+      font-size: 0.83rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    /* check-in button */
+    #btnCheckIn {
+      padding: 0.65rem 2rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+    }
+
+    /* Stat card accent colours */
+    #statCatRem, #statVendRem { color: var(--green) !important; }
+
+    /* Facilities grid */
+    .facilities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 0.25rem;
+    }
+    .fac-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.1rem 1.2rem;
+    }
+    .fac-card:hover { border-color: var(--green); }
+
+    .fac-card-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+    .fac-card-meta {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+    .fac-card-price {
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-bottom: 0.6rem;
+    }
+    .fac-card-price strong { color: var(--green); }
+
+    .fac-peak-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 99px;
+    }
+    .fac-peak-badge.active {
+      background: rgba(245,158,11,0.15);
+      border: 1px solid #f59e0b;
+      color: #f59e0b;
+    }
+    .fac-peak-badge.inactive {
+      background: rgba(108,99,255,0.15);
+      border: 1px solid var(--green);
+      color: var(--green);
+    }
+    .fac-peak-badge.none {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .fac-peak-detail {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+      line-height: 1.5;
+    }
+
+    /* Button row */
+    .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <h1>⚡ FitChain</h1>
+    <nav>
+      <a href="index.html">Home</a>
+    </nav>
+  </div>
+
+  <div id="wallet-banner"></div>
+
+  <div class="page-header">
+    <div class="page-icon">🎽</div>
+    <h2>Member <span>Portal</span></h2>
+    <p>Manage your subscription, check in to facilities and track your progress.</p>
+  </div>
+
+  <main>
+
+    <section>
+      <h2><i class="s-icon">🏟️</i>Facilities &amp; Peak Hours</h2>
+      <div id="facilitiesGrid" class="facilities-grid">
+        <p style="color:var(--muted);font-size:0.85rem">Loading facilities…</p>
+      </div>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">📊</i>My Subscription</h2>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="val" id="subTier">—</div>
+          <div class="lbl">Tier</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="subCredits">—</div>
+          <div class="lbl">Credits</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="subActive" style="font-size:1rem">—</div>
+          <div class="lbl">Status</div>
+        </div>
+        <div class="stat-card" style="grid-column:span 2">
+          <div class="val" style="font-size:1rem" id="subExpiry">—</div>
+          <div class="lbl">Expires</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">💳</i>Subscribe &amp; Renew</h2>
+      <table class="tier-table" style="margin-bottom:1rem">
+        <thead>
+          <tr><th>Tier</th><th>Monthly cap</th><th>Price / Credits</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>🥉 Bronze</td><td>4 visits / month</td><td id="price1">loading…</td></tr>
+          <tr><td>🥈 Silver</td><td>8 visits / month</td><td id="price2">loading…</td></tr>
+          <tr><td>🥇 Gold</td> <td>12 visits / month</td><td id="price3">loading…</td></tr>
+        </tbody>
+      </table>
+      <div class="row">
+        <div class="field">
+          <label>Choose tier</label>
+          <select id="subTierSel">
+            <option value="1">🥉 Bronze</option>
+            <option value="2">🥈 Silver</option>
+            <option value="3">🥇 Gold</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button id="btnSubscribe">Subscribe</button>
+        <button id="btnRenew" class="secondary">↻ Renew</button>
+      </div>
+      <div id="statusSub" class="status"></div>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">🍒</i>Subscribe with a Referral</h2>
+      <div class="referral-bonus-tag">
+        🎁 Referral bonus: <strong id="refBonusDisplay">…</strong> credits — for you &amp; your referrer
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Choose tier</label>
+          <select id="refTierSel">
+            <option value="1">🥉 Bronze</option>
+            <option value="2">🥈 Silver</option>
+            <option value="3">🥇 Gold</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Referrer wallet address</label>
+          <input id="referrerAddr" type="text" placeholder="0x… (friend's address)" />
+        </div>
+      </div>
+      <button id="btnSubscribeRef">Subscribe with Referral</button>
+      <div id="statusRef" class="status"></div>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">📍</i>Check In</h2>
+      <p style="font-size:0.82rem;color:var(--muted);margin-bottom:1rem">
+        🏅 Visit the same facility 4 weeks in a row to earn a <strong style="color:var(--green)">VIP badge</strong> and unlock a discount there.
+      </p>
+      <div class="row">
+        <div class="field">
+          <label>Select facility</label>
+          <select id="checkInFac">
+            <option value="">Select facility…</option>
+          </select>
+        </div>
+      </div>
+      <div id="peakBanner" style="display:none"></div>
+      <button id="btnCheckIn">Check In</button>
+      <div id="statusCheckIn" class="status"></div>
+    </section>
+
+    <section>
+      <h2><i class="s-icon">📈</i>Monthly Visit Stats</h2>
+      <div class="row">
+        <div class="field">
+          <label>Select facility to check stats</label>
+          <select id="statFacSel">
+            <option value="">Select facility…</option>
+          </select>
+        </div>
+      </div>
+      <button id="btnStats" class="secondary" style="display:none">Load Stats</button>
+      <div id="statusStats" class="status"></div>
+      <div class="stats-grid" style="margin-top:0.75rem">
+        <div class="stat-card">
+          <div class="val" id="statCatUsed">—</div>
+          <div class="lbl">Category used</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="statCatRem">—</div>
+          <div class="lbl">Category remaining</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="statVendUsed">—</div>
+          <div class="lbl">Total used</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="statVendRem">—</div>
+          <div class="lbl">Total remaining</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>
