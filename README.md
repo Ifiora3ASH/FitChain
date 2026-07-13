@@ -1,4 +1,4 @@
-# ⚡ FitChain — Fitness Subscription on the Blockchain
+# FitChain — Fitness Subscription on the Blockchain
 
 > One subscription. Every gym. Zero middlemen.
 
@@ -12,7 +12,7 @@ FitChain is a smart contract project we built for the TU Berlin Smart Contracts 
 
 ---
 
-## 🧠 What's the Idea?
+## What's the Idea?
 
 Think of it like a gym pass that works across multiple venues in a city. Instead of each gym having its own membership, they all register on the same smart contract platform. You buy one monthly subscription, get some credits, and spend them wherever you go.
 
@@ -20,7 +20,7 @@ When you check in, credits move from your wallet directly to the facility's wall
 
 ---
 
-## 💡 Why Blockchain?
+## Why Blockchain?
 
 Honestly the main reason this works on a blockchain is trust — nobody has to trust a company to handle their money correctly.
 
@@ -34,7 +34,7 @@ Honestly the main reason this works on a blockchain is trust — nobody has to t
 
 ---
 
-## 🏗️ Smart Contracts
+## Smart Contracts
 
 We split the logic across three contracts:
 
@@ -64,7 +64,7 @@ Facility
 
 ---
 
-## 🎟️ Default Subscription Tiers
+## Default Subscription Tiers
 
 | Tier | Credits/Month | Total Visits | Per-Category Cap | Price |
 |------|--------------|--------------|-----------------|-------|
@@ -76,18 +76,18 @@ The caps are enforced by the contract — you literally can't check in once you'
 
 ---
 
-## ✨ Extra Features (Cherry on Top)
+## Extra Features (Cherry on Top)
 
 The assignment asked each group member to add one extra feature. Here's what we came up with:
 
-### 💌 Friend Referral System
+### Friend Referral System
 When you sign up using a friend's referral code (first 2 bytes of their wallet address), both of you get bonus credits. The admin sets how many. You can only be referred once and can't refer yourself.
 
 ```solidity
 function subscribeWithReferral(uint256 _tierID, bytes2 _referralCode) external payable
 ```
 
-### 🏅 VIP Badge System
+### VIP Badge System
 Go to the same facility 4 weeks in a row and you earn a VIP badge — an ERC-1155 token specific to that venue. Facilities can set a discount (5–50%) for badge holders, so loyal regulars pay less per session.
 
 ```solidity
@@ -95,10 +95,10 @@ Go to the same facility 4 weeks in a row and you earn a VIP badge — an ERC-115
 subscription.mintVIPBadge(msg.sender, _facility);
 ```
 
-### ⚡ Peak Hour Pricing
+### Peak Hour Pricing
 Facilities can set a time window and a multiplier (e.g. 150 = 1.5×). The contract checks `block.timestamp` to figure out the current hour and applies the multiplier automatically at check-in.
 
-### 🏆 Leaderboard & Daily Streak
+### Leaderboard & Daily Streak
 Members set a username and build a streak by checking in on consecutive days. Miss a day and it resets. The whole leaderboard lives on-chain — no off-chain database needed.
 
 ```solidity
@@ -109,7 +109,7 @@ function getLeaderboard() external view returns (LeaderboardEntry[] memory)
 
 ---
 
-## 🗺️ Business Process (Simplified)
+## Business Process (Simplified)
 
 ```
 1. Admin registers a facility on the Registry
@@ -122,7 +122,7 @@ function getLeaderboard() external view returns (LeaderboardEntry[] memory)
 
 ---
 
-## 🖥️ Frontend
+## Frontend
 
 Three portals built with Vite + TypeScript + ethers.js. Nothing fancy, just functional:
 
@@ -135,7 +135,7 @@ Connect MetaMask and each page loads your data from the contracts automatically.
 
 ---
 
-## 🚀 Running Locally
+## Running Locally
 
 ### Prerequisites
 - Node.js 18+
@@ -168,7 +168,7 @@ Open `http://localhost:5173`, connect MetaMask to localhost and you're good.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | What we used |
 |-------|-------------|
@@ -181,7 +181,7 @@ Open `http://localhost:5173`, connect MetaMask to localhost and you're good.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 FitChain/
@@ -210,7 +210,7 @@ FitChain/
 
 ---
 
-## 👥 Team
+## Team
 
 Built as part of the TU Berlin Smart Contracts course.  
 GitHub: [github.com/BlackFDog/fitchain](https://github.com/BlackFDog/fitchain)
